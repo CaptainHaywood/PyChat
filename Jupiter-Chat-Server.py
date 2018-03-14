@@ -3,21 +3,17 @@ from threading import Thread
 
 
 def accept_incoming_connections():
-    """Sets up handling for incoming clients."""
     while True:
         client, client_address = SERVER.accept()
         print("%s:%s has connected." % client_address)
-        client.send(bytes("Welcome to the chat. Please enter a handle and press enter.", "utf8"))
+        client.send(bytes("Welcome. Please enter your handle and press enter.", "utf8"))
         addresses[client] = client_address
         Thread(target=handle_client, args=(client,)).start()
 
 
-def handle_client(client):  # Takes client socket as argument.
-    """Handles a single client connection."""
-
+def handle_client(client):
     name = client.recv(BUFSIZ).decode("utf8")
-    welcome = 'Welcome %s. Type /help for help.' % name
-    help = '---HELP--- \n /leave - Leave the chatroom. \n /help - This help menu. \n More to come.'
+    welcome = 'Welcome %s. Enter /help for help.' % name
     client.send(bytes(welcome, "utf8"))
     msg = "%s has joined the chat." % name
     broadcast(bytes(msg, "utf8"))
@@ -25,14 +21,17 @@ def handle_client(client):  # Takes client socket as argument.
 
     while True:
         msg = client.recv(BUFSIZ)
-        if msg != bytes("/leave", "utf8"):
+        if msg != bytes("/leave" and "/help", "utf8"):
             broadcast(msg, name+": ")
         else:
-            client.send(bytes("/leave", "utf8"))
-            client.close()
-            del clients[client]
-            broadcast(bytes("%s has left the chat." % name, "utf8"))
-            break
+            if msg == bytes("/leave", "utf8"):
+                client.send(bytes("/leave", "utf8"))
+                client.close()
+                del clients[client]
+                broadcast(bytes("%s has left the chat." % name, "utf8"))
+                break
+            else:
+                print ("A-OK")
 
 
 def broadcast(msg, prefix=""):  # prefix is for name identification.

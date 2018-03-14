@@ -4,39 +4,45 @@ import tkinter
 
 
 def receive():
-    """Handles receiving of messages."""
     while True:
         try:
             msg = client_socket.recv(BUFSIZ).decode("utf8")
             msg_list.insert(tkinter.END, msg)
-        except OSError:  # Possibly client has left the chat.
+        except OSError:  #client may have left the chat
             break
 
 
-def send(event=None):  # event is passed by binders.
-    """Handles sending of messages."""
+def send(event=None):
     msg = my_msg.get()
-    my_msg.set("")  # Clears input field.
+    my_msg.set("")  #clear box
     client_socket.send(bytes(msg, "utf8"))
-    if msg == "{quit}":
+    if msg == "/leave":
         client_socket.close()
         top.quit()
+    elif msg == "/help":
+        helpA = "---HELP MENU---"
+        helpB = "/help ~ This help menu."
+        helpC = "/leave ~ Leave the chatroom."
+        msg_list.insert(tkinter.END, helpA)
+        msg_list.insert(tkinter.END, helpB)
+        msg_list.insert(tkinter.END, helpC)
+        
 
 
 def on_closing(event=None):
     """This function is to be called when the window is closed."""
-    my_msg.set("{quit}")
+    my_msg.set("/leave")
     send()
 
 top = tkinter.Tk()
-top.title("Chatter")
+top.title("Jupiter Chat")
 
 messages_frame = tkinter.Frame(top)
 my_msg = tkinter.StringVar()  # For the messages to be sent.
 my_msg.set("")
 scrollbar = tkinter.Scrollbar(messages_frame)  # To navigate through past messages.
 # Following will contain the messages.
-msg_list = tkinter.Listbox(messages_frame, height=15, width=50, yscrollcommand=scrollbar.set)
+msg_list = tkinter.Listbox(messages_frame, height=30, width=100, yscrollcommand=scrollbar.set)
 scrollbar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
 msg_list.pack(side=tkinter.LEFT, fill=tkinter.BOTH)
 msg_list.pack()
@@ -50,7 +56,6 @@ send_button.pack()
 
 top.protocol("WM_DELETE_WINDOW", on_closing)
 
-#----Now comes the sockets part----
 HOST = input('Enter host: ')
 PORT = input('Enter port: ')
 if not PORT:
