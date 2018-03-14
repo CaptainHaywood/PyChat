@@ -17,6 +17,7 @@ def handle_client(client):  # Takes client socket as argument.
 
     name = client.recv(BUFSIZ).decode("utf8")
     welcome = 'Welcome %s. Type /help for help.' % name
+    help = '---HELP--- \n /leave - Leave the chatroom. \n /help - This help menu. \n More to come.'
     client.send(bytes(welcome, "utf8"))
     msg = "%s has joined the chat." % name
     broadcast(bytes(msg, "utf8"))
@@ -26,6 +27,8 @@ def handle_client(client):  # Takes client socket as argument.
         msg = client.recv(BUFSIZ)
         if msg != bytes("{quit}", "utf8"):
             broadcast(msg, name+": ")
+        elif msg == bytes("/help", "utf8"):
+            client.send(bytes(help, "utf8"))
         else:
             client.send(bytes("{quit}", "utf8"))
             client.close()
