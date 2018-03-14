@@ -1,5 +1,6 @@
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
+import shelve
 
 
 def accept_incoming_connections():
@@ -15,20 +16,24 @@ def handle_client(client):
     name = client.recv(BUFSIZ).decode("utf8")
     welcome = 'Welcome %s. Enter /help for help.' % name
     client.send(bytes(welcome, "utf8"))
+    print("%s has joined the chat." % name)
     msg = "%s has joined the chat." % name
     broadcast(bytes(msg, "utf8"))
     clients[client] = name
 
     while True:
         msg = client.recv(BUFSIZ)
-        if msg != bytes("/leave" and "/help", "utf8"):
-            broadcast(msg, name+": ")
+        if msg != bytes("/leave", "utf8"):
+            if msg != bytes("/help", "utf8"):
+                print("%s said:", msg, "" % name)
+                broadcast(msg, name+": ")
         else:
             if msg == bytes("/leave", "utf8"):
                 client.send(bytes("/leave", "utf8"))
                 client.close()
                 del clients[client]
                 broadcast(bytes("%s has left the chat." % name, "utf8"))
+                print("%s has left the chat." % name)
                 break
             else:
                 print ("A-OK")
@@ -45,7 +50,7 @@ clients = {}
 addresses = {}
 
 HOST = ''
-PORT = 80 #33000 default
+PORT = 33000 #33000 default
 BUFSIZ = 1024
 ADDR = (HOST, PORT)
 
