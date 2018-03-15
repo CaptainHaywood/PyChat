@@ -47,9 +47,24 @@ def handle_client(client):
     client.send(bytes(welcomeM, "utf8"))
     msg = "%s has joined the chat." % name
     broadcast(bytes(msg, "utf8"))
+    client.send(bytes(" ", "utf8"))
+    print("")
     client.send(bytes(motdN, "utf8")) #try and fix MOTD sending
+    print("")
+    client.send(bytes(motdA, "utf8"))
+    print("")
+    client.send(bytes(motdB, "utf8"))
+    print("")
+    client.send(bytes(motdC, "utf8"))
+    print("")
+    client.send(bytes(motdD, "utf8"))
+    print("")
+    client.send(bytes(motdE, "utf8"))
+    print("")
+    client.send(bytes(motdN, "utf8"))
+    print("")
+    client.send(bytes(" ", "utf8"))
     clients[client] = name
-
     while True:
         msg = client.recv(BUFSIZ)
         if msg != bytes("/leave", "utf8"):

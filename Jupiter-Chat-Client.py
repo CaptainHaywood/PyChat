@@ -41,19 +41,27 @@ top.title("Jupiter Chat")
 messages_frame = tkinter.Frame(top)
 my_msg = tkinter.StringVar()  # For the messages to be sent.
 my_msg.set("")
-scrollbar = tkinter.Scrollbar(messages_frame)  # To navigate through past messages.
-# Following will contain the messages.
+
+jchat = tkinter.Label(messages_frame, text="Jupiter Chat", fg="orange", font=("TkDefaultFont", 20))
+jchat.pack(side=tkinter.LEFT, anchor=tkinter.NW)
+
+sepA = tkinter.Seperator(messages_frame, orient=tkinter.HORIZONTAL)
+sepA.pack(side=tkinter.LEFT, anchor=tkinter.NW) #doesnt work fix
+
+scrollbar = tkinter.Scrollbar(messages_frame)  #scrollbar (vertical)
+#holds msgs
 msg_list = tkinter.Listbox(messages_frame, height=30, width=100, yscrollcommand=scrollbar.set)
 scrollbar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
 msg_list.pack(side=tkinter.LEFT, fill=tkinter.BOTH)
 msg_list.pack()
 messages_frame.pack()
 
-entry_field = tkinter.Entry(top, textvariable=my_msg)
-entry_field.bind("<Return>", send)
-entry_field.pack()
 send_button = tkinter.Button(top, text="Send", command=send)
-send_button.pack()
+send_button.pack(side=tkinter.RIGHT)
+entry_field = tkinter.Entry(top, width = 97, textvariable=my_msg)
+entry_field.bind("<Return>", send)
+entry_field.pack(side=tkinter.RIGHT)
+
 
 top.protocol("WM_DELETE_WINDOW", on_closing)
 
