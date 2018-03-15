@@ -65,20 +65,17 @@ def handle_client(client):
     print("")
     client.send(bytes(" ", "utf8"))
     clients[client] = name
+    
     while True:
         msg = client.recv(BUFSIZ)
         if msg != bytes("/leave", "utf8"):
-            if msg != bytes("/help", "utf8"):
-                broadcast(msg, name+": ")
+            broadcast(msg, name+": ")
         else:
-            if msg == bytes("/leave", "utf8"):
-                client.send(bytes("/leave", "utf8"))
-                client.close()
-                del clients[client]
-                broadcast(bytes("%s has left the chat." % name, "utf8"))
-                break
-            else:
-                print ("A-OK")
+            client.send(bytes("/leave", "utf8"))
+            client.close()
+            del clients[client]
+            broadcast(bytes("%s has left the chat." % name, "utf8"))
+            break
 
 
 def broadcast(msg, prefix=""):  # prefix is for name identification.
