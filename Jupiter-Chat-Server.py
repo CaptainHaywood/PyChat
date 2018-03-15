@@ -2,30 +2,58 @@ from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 import shelve
 
+global motdN
+global motdA
+global motdB
+global motdC
+global motdD
+global motdE
+global welcome
+global success
+global servername
+global maxconn
+global logonM
+global adPIN
+global sport
+
+shelfFile = shelve.open('server_config')
+motdN = shelfFile ['motdN_Var']
+motdA = shelfFile ['motdA_Var']
+motdB = shelfFile ['motdB_Var']
+motdC = shelfFile ['motdC_Var']
+motdD = shelfFile ['motdD_Var']
+motdE = shelfFile ['motdE_Var']
+welcome = shelfFile ['welcome_Var']
+success = shelfFile ['success_Var']
+servername = shelfFile ['servername_Var']
+maxconn = shelfFile ['maxconn_Var']
+logonM = shelfFile ['logonM_Var']
+adPIN = shelfFile ['adPIN_Var']
+sport = shelfFile ['sport_Var']
+shelfFile.close()
 
 def accept_incoming_connections():
     while True:
         client, client_address = SERVER.accept()
         print("%s:%s has connected." % client_address)
-        client.send(bytes("Welcome. Please enter your handle and press enter.", "utf8"))
+        client.send(bytes(welcome, "utf8"))
         addresses[client] = client_address
         Thread(target=handle_client, args=(client,)).start()
 
 
 def handle_client(client):
     name = client.recv(BUFSIZ).decode("utf8")
-    welcome = 'Welcome %s. Enter /help for help.' % name
-    client.send(bytes(welcome, "utf8"))
-    print("%s has joined the chat." % name)
+    welcomeM = success
+    client.send(bytes(welcomeM, "utf8"))
     msg = "%s has joined the chat." % name
     broadcast(bytes(msg, "utf8"))
+    client.send(bytes(motdN, "utf8")) #try and fix MOTD sending
     clients[client] = name
 
     while True:
         msg = client.recv(BUFSIZ)
         if msg != bytes("/leave", "utf8"):
             if msg != bytes("/help", "utf8"):
-                print("%s said:", msg, "" % name)
                 broadcast(msg, name+": ")
         else:
             if msg == bytes("/leave", "utf8"):
@@ -33,7 +61,6 @@ def handle_client(client):
                 client.close()
                 del clients[client]
                 broadcast(bytes("%s has left the chat." % name, "utf8"))
-                print("%s has left the chat." % name)
                 break
             else:
                 print ("A-OK")
@@ -58,7 +85,7 @@ SERVER = socket(AF_INET, SOCK_STREAM)
 SERVER.bind(ADDR)
 
 if __name__ == "__main__":
-    SERVER.listen(5)
+    SERVER.listen(maxconn)
     print("Waiting for connection...")
     ACCEPT_THREAD = Thread(target=accept_incoming_connections)
     ACCEPT_THREAD.start()
