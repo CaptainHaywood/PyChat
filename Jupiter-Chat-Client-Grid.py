@@ -36,27 +36,27 @@ my_msg = tkinter.StringVar()  # For the messages to be sent.
 my_msg.set("")
 
 jchat = tkinter.Label(messages_frame, text="Jupiter Chat", fg="orange", font=("TkDefaultFont", 20))
-jchat.pack(side=tkinter.LEFT, anchor=tkinter.NW)
+jchat.grid(row=0, column=0, sticky=tkinter.NW)
 
 #sepA = tkinter.Seperator(messages_frame, orient=tkinter.HORIZONTAL)
 #sepA.pack(side=tkinter.LEFT, anchor=tkinter.NW) #doesnt work fix
 
 servb = tkinter.Button(messages_frame, text="Servers", width = 20)
-servb.pack(side=tkinter.LEFT, anchor=tkinter.NW)
+servb.grid(row=0, column=0, sticky=tkinter.NW)
 
 scrollbar = tkinter.Scrollbar(messages_frame)  #scrollbar (vertical)
 #holds msgs
 msg_list = tkinter.Listbox(messages_frame, height=30, width=100, yscrollcommand=scrollbar.set)
-scrollbar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
-msg_list.pack(side=tkinter.LEFT, fill=tkinter.BOTH)
-msg_list.pack()
-messages_frame.pack()
+scrollbar.grid(row=0, column=2)
+msg_list.grid(row=0, column=1)
+msg_list.grid()
+messages_frame.grid()
 
 send_button = tkinter.Button(top, text="Send", command=send)
-send_button.pack(side=tkinter.RIGHT)
+send_button.grid(row=1, column=1)
 entry_field = tkinter.Entry(top, width = 95, textvariable=my_msg)
 entry_field.bind("<Return>", send)
-entry_field.pack(side=tkinter.RIGHT)
+entry_field.grid(row=1, column=0)
 
 
 top.protocol("WM_DELETE_WINDOW", on_closing)
