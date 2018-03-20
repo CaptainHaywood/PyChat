@@ -1,4 +1,3 @@
-
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 import tkinter
@@ -34,7 +33,7 @@ def send(event=None):
         client_socket.close()
         top.destroy()
         top.quit()
-        
+
 
 
 def on_closing(event=None):
@@ -71,7 +70,7 @@ scrollbar = tkinter.Scrollbar(messages_frame)  #scrollbar (vertical)
 #holds msgs
 msg_list = tkinter.Listbox(messages_frame, height=30, width=100, yscrollcommand=scrollbar.set)
 scrollbar.grid(row=1, column=2, sticky=tkinter.E)
-msg_list.grid(row=1, column=1, sticky=tkinter.NE)
+msg_list.grid(row=1, column=1)
 msg_list.grid()
 buttons_frame.grid()
 messages_frame.grid()
@@ -80,7 +79,7 @@ messages_frame.grid()
 #send_button.grid(row=2, column=1, sticky=tkinter.SE)
 entry_field = tkinter.Entry(top, width = 100, textvariable=my_msg)
 entry_field.bind("<Return>", send)
-entry_field.grid(row=2, column=0, sticky=tkinter.SW)
+entry_field.grid(row=2, column=0)
 
 
 top.protocol("WM_DELETE_WINDOW", on_closing)
