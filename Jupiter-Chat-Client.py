@@ -35,7 +35,25 @@ def helpb():
     helpwin.title("Help")
     helptitle = tkinter.Label(helpwin, text="HELP", fg="blue", font=("TkDefaultFont", 15))
     helptitle.grid(row=0, column=0, sticky=tkinter.N)
-    
+    help_list = tkinter.Listbox(helpwin, height=10, width=75)
+    help_list.grid(row=1, column=0)
+    help_list.insert(tkinter.END, "//GENERAL COMMANDS//")
+    help_list.insert(tkinter.END, "/leave: Leave the server you are currently connected to.")
+    help_list.insert(tkinter.END, "/cloak: Broadcast that you have left the chat, but remain connected.")
+    help_list.insert(tkinter.END, "/???")
+    help_list.insert(tkinter.END, "")
+    help_list.insert(tkinter.END, "//ADMINISTRATOR COMMANDS//")
+    help_list.insert(tkinter.END, "#/PIN REQUIRED/#")
+    help_list.insert(tkinter.END, "/silence: Prevents any conversation from happening.")
+    help_list.insert(tkinter.END, "/noise: Disables /silence if active; otherwise does nothing.")
+    help_list.insert(tkinter.END, "/broadcast: Enter a message to be broadcast anonymously.")
+    help_list.insert(tkinter.END, "/close: Broadcast a warning and close the server after ten seconds.")
+    helpcb = tkinter.Button(helpwin, text="Close", width=10, command=helpclose)
+    helpcb.grid(row=2, column=0, sticky=tkinter.S)
+
+
+
+
 
 def receive():
     while True:
@@ -98,6 +116,8 @@ messages_frame.grid()
 
 #send_button = tkinter.Button(top, text="Send", command=send)
 #send_button.grid(row=2, column=1, sticky=tkinter.SE)
+#Above code clusterfucks the UI, DO NOT UNCOMMENT UNDER ANY CIRCUMSTANCES
+
 entry_field = tkinter.Entry(top, width = 100, textvariable=my_msg)
 entry_field.bind("<Return>", send)
 entry_field.grid(row=2, column=0)
