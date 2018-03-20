@@ -2,8 +2,10 @@ from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 import tkinter
 
-
 def about():
+    def aboutclose():
+        aboutwin.destroy()
+
     aboutwin = tkinter.Tk()
     aboutwin.title("About")
     jchat = tkinter.Label(aboutwin, text="JUPITER CHAT", fg="orange", font=("TkDefaultFont", 15))
@@ -14,7 +16,7 @@ def about():
     cright.grid(row=2, column=0, sticky=tkinter.N)
     cright = tkinter.Label(aboutwin, text="© James Haywood 2018")
     cright.grid(row=3, column=0, sticky=tkinter.N)
-    leaveabout = tkinter.Button(aboutwin, text="Close", width=10)
+    leaveabout = tkinter.Button(aboutwin, text="Close", width=10, command=aboutclose)
     leaveabout.grid(row=4, column=0, sticky=tkinter.S)
 
 
@@ -26,7 +28,14 @@ def settings():
     print("")
 
 def helpb():
-    print("")
+    def helpclose():
+        helpwin.destroy()
+
+    helpwin=tkinter.Tk()
+    helpwin.title("Help")
+    helptitle = tkinter.Label(helpwin, text="HELP", fg="blue", font=("TkDefaultFont", 15))
+    helptitle.grid(row=0, column=0, sticky=tkinter.N)
+    
 
 def receive():
     while True:
