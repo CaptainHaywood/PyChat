@@ -6,6 +6,18 @@ import tkinter
 def about():
     aboutwin = tkinter.Tk()
     aboutwin.title("About")
+    jchat = tkinter.Label(aboutwin, text="JUPITER CHAT", fg="orange", font=("TkDefaultFont", 15))
+    jchat.grid(row=0, column=0, sticky=tkinter.N)
+    vers = tkinter.Label(aboutwin, text="v1.0.0")
+    vers.grid(row=1, column=0, sticky=tkinter.N)
+    cright = tkinter.Label(aboutwin, text="A Python-based IRC-alike chat program using Tkinter and sockets.")
+    cright.grid(row=2, column=0, sticky=tkinter.N)
+    cright = tkinter.Label(aboutwin, text="© James Haywood 2018")
+    cright.grid(row=3, column=0, sticky=tkinter.N)
+    leaveabout = tkinter.Button(aboutwin, text="Close", width=10)
+    leaveabout.grid(row=4, column=0, sticky=tkinter.S)
+
+
 
 def servers():
     print("")
