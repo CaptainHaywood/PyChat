@@ -1,6 +1,8 @@
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 import tkinter
+global HOST
+global PORT
 
 def about():
     def aboutclose():
@@ -8,7 +10,7 @@ def about():
 
     aboutwin = tkinter.Tk()
     aboutwin.title("About")
-    jchat = tkinter.Label(aboutwin, text="PyChat", fg="orange", font=("TkDefaultFont", 15))
+    jchat = tkinter.Label(aboutwin, text="PyChat", fg="blue", font=("TkDefaultFont", 15))
     jchat.grid(row=0, column=0, sticky=tkinter.N)
     vers = tkinter.Label(aboutwin, text="v1.0.0")
     vers.grid(row=1, column=0, sticky=tkinter.N)
@@ -22,7 +24,38 @@ def about():
 
 
 def servers():
-    print("")
+    hostv = tkinter.StringVar()
+    hostv.set("")
+    portv = tkinter.StringVar()
+    portv.set("")
+    serverwin = tkinter.Tk()
+    serverwin.title("Manage Connections")
+    servertitle = tkinter.Label(serverwin, text="MANAGE CONNECTIONS", fg="blue", font=("TkDefaultFont", 15))
+    servertitle.grid(row=0, column=1, sticky=tkinter.N)
+    brA = tkinter.Label(serverwin, text="#-----#")
+    brA.grid(row=1, column=1)
+    conto = tkinter.Label(serverwin, text="Currently Connected To:")
+    conto.grid(row=2, column=1)
+    conhostl = tkinter.Label(serverwin, text="Host IP:")
+    conhostl.gird(row=3, column=0)
+    conhost = tkinter.Label(serverwin, text=HOST)
+    conhost.grid(row=3, column=1)
+    conportl = tkinter.Label(serverwin, text="Port:")
+    conportl.gird(row=4, column=0)
+    conport = tkinter.Label(serverwin, text=PORT)
+    conport.grid(row=4, column=1)
+    brB = tkinter.Label(serverwin, text="#-----#")
+    brB.grid(row=5, column=1)
+    hostlabel = tkinter.Label(serverwin, text="Host IP:")
+    hostlabel.grid(row=2, column=0)
+    portlabel = tkinter.Label(serverwin, text="Port:")
+    portlabel.grid(row=3, column=0)
+    host_entry = tkinter.Entry(serverwin, width = 25, textvariable=hostv)
+    host_entry.grid(row=2, column=1)
+    port_entry = tkinter.Entry(serverwin, width = 25, textvariable=portv)
+    port_entry.grid(row=3, column=1)
+    
+    
 
 def settings():
     print("")
@@ -93,7 +126,7 @@ jchat.grid(row=0, column=3, sticky=tkinter.N)
 #sepA = tkinter.Seperator(messages_frame, orient=tkinter.HORIZONTAL)
 #sepA.pack(side=tkinter.LEFT, anchor=tkinter.NW) #doesnt work fix
 
-servb = tkinter.Button(buttons_frame, text="Servers", width = 20, command=servers)
+servb = tkinter.Button(buttons_frame, text="Connections", width = 20, command=servers)
 servb.grid(row=0, column=1, sticky=tkinter.NW)
 
 helpb = tkinter.Button(buttons_frame, text="Help", width = 20, command=helpb)
@@ -125,12 +158,15 @@ entry_field.grid(row=2, column=0)
 
 top.protocol("WM_DELETE_WINDOW", on_closing)
 
-HOST = input('Enter host: ')
-PORT = input('Enter port: ')
-if not PORT:
-    PORT = 33000
-else:
-    PORT = int(PORT)
+#HOST = input('Enter host: ')
+#PORT = input('Enter port: ')
+#if not PORT:
+#    PORT = 33000
+#else:
+#    PORT = int(PORT)
+
+HOST = "LOCALHOST"
+PORT = 33000
 
 BUFSIZ = 1024
 ADDR = (HOST, PORT)
