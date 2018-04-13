@@ -8,7 +8,7 @@ def about():
 
     aboutwin = tkinter.Tk()
     aboutwin.title("About")
-    jchat = tkinter.Label(aboutwin, text="JUPITER CHAT", fg="orange", font=("TkDefaultFont", 15))
+    jchat = tkinter.Label(aboutwin, text="PyChat", fg="orange", font=("TkDefaultFont", 15))
     jchat.grid(row=0, column=0, sticky=tkinter.N)
     vers = tkinter.Label(aboutwin, text="v1.0.0")
     vers.grid(row=1, column=0, sticky=tkinter.N)
