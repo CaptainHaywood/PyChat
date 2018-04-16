@@ -122,7 +122,7 @@ def send(event=None):
     client_socket.send(bytes(msg, "utf8"))
     if msg == "/leave":
         client_socket.close()
-        top.destroy()
+        #top.destroy()
         top.quit()
 
 
