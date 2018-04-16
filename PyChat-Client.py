@@ -3,6 +3,9 @@ from threading import Thread
 import tkinter
 global HOST
 global PORT
+global conecc
+global hostv
+global portv
 
 def about():
     def aboutclose():
@@ -21,7 +24,23 @@ def about():
     leaveabout = tkinter.Button(aboutwin, text="Close", width=10, command=aboutclose)
     leaveabout.grid(row=4, column=0, sticky=tkinter.S)
 
+def connect():
+    HOST = hostv.get()
+    PORT = portv.get()
+    ADDR = (HOST, PORT)
 
+    client_socket = socket(AF_INET, SOCK_STREAM)
+    client_socket.connect(ADDR)
+
+    receive_thread = Thread(target=receive) 
+    receive_thread.start()
+    
+
+def disconnect():
+    client_socket.close()
+    HOST = "OFFLINE"
+    PORT = "OFFLINE"
+    conecc = "NO"
 
 def servers():
     hostv = tkinter.StringVar()
@@ -30,30 +49,30 @@ def servers():
     portv.set("")
     serverwin = tkinter.Tk()
     serverwin.title("Manage Connections")
-    servertitle = tkinter.Label(serverwin, text="MANAGE CONNECTIONS", fg="blue", font=("TkDefaultFont", 15))
-    servertitle.grid(row=0, column=1, sticky=tkinter.N)
-    brA = tkinter.Label(serverwin, text="#-----#")
-    brA.grid(row=1, column=1)
     conto = tkinter.Label(serverwin, text="Currently Connected To:")
     conto.grid(row=2, column=1)
     conhostl = tkinter.Label(serverwin, text="Host IP:")
-    conhostl.gird(row=3, column=0)
+    conhostl.grid(row=3, column=0)
     conhost = tkinter.Label(serverwin, text=HOST)
     conhost.grid(row=3, column=1)
     conportl = tkinter.Label(serverwin, text="Port:")
-    conportl.gird(row=4, column=0)
+    conportl.grid(row=4, column=0)
     conport = tkinter.Label(serverwin, text=PORT)
     conport.grid(row=4, column=1)
+    discon = tkinter.Button(serverwin, width=10, text="Disconnect", command=disconnect)
+    discon.grid(row=5, column=1)
     brB = tkinter.Label(serverwin, text="#-----#")
-    brB.grid(row=5, column=1)
+    brB.grid(row=6, column=1)
     hostlabel = tkinter.Label(serverwin, text="Host IP:")
-    hostlabel.grid(row=2, column=0)
+    hostlabel.grid(row=7, column=0)
     portlabel = tkinter.Label(serverwin, text="Port:")
-    portlabel.grid(row=3, column=0)
+    portlabel.grid(row=8, column=0)
     host_entry = tkinter.Entry(serverwin, width = 25, textvariable=hostv)
-    host_entry.grid(row=2, column=1)
+    host_entry.grid(row=7, column=1)
     port_entry = tkinter.Entry(serverwin, width = 25, textvariable=portv)
-    port_entry.grid(row=3, column=1)
+    port_entry.grid(row=8, column=1)
+    connectb = tkinter.Button(serverwin, width=10, text="Connect", command=connect)
+    connectb.grid(row=9, column=1)
     
     
 
