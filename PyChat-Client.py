@@ -6,6 +6,7 @@ global PORT
 global conecc
 global hostv
 global portv
+conecc = "NO"
 
 def about():
     def aboutclose():
@@ -25,22 +26,27 @@ def about():
     leaveabout.grid(row=4, column=0, sticky=tkinter.S)
 
 def connect():
-    HOST = hostv.get()
-    PORT = portv.get()
+    global conecc
+    BUFSIZ = 1024
+    HOST = "LOCALHOST"
+    PORT = 33000
     ADDR = (HOST, PORT)
 
-    client_socket = socket(AF_INET, SOCK_STREAM)
+    #if conecc == "NO":
+        #client_socket = socket(AF_INET, SOCK_STREAM)
+        
     client_socket.connect(ADDR)
 
     receive_thread = Thread(target=receive) 
     receive_thread.start()
+    conecc = "YES"
     
 
 def disconnect():
-    client_socket.close()
     HOST = "OFFLINE"
     PORT = "OFFLINE"
-    conecc = "NO"
+    my_msg.set("/leave")
+    send()
 
 def servers():
     hostv = tkinter.StringVar()
@@ -117,19 +123,30 @@ def receive():
 
 
 def send(event=None):
-    msg = my_msg.get()
-    my_msg.set("")
-    client_socket.send(bytes(msg, "utf8"))
-    if msg == "/leave":
-        client_socket.close()
-        #top.destroy()
-        top.quit()
+    global conecc
+    if conecc == "NO":
+        msg_list.insert(tkinter.END, "OFFLINE")
+    else:
+        msg = my_msg.get()
+        my_msg.set("")
+        client_socket.send(bytes(msg, "utf8"))
+        if msg == "/leave":
+            msg_list.insert(tkinter.END, "")
+            msg_list.insert(tkinter.END, "DISCONNECTED FROM SERVER")
+            client_socket.close()
+            conecc = "NO"
+            #top.destroy()
+            #top.quit()
 
 
 
 def on_closing(event=None):
-    my_msg.set("/leave")
-    send()
+    global conecc
+    if conecc == "NO":
+        top.destroy()
+    else:
+        my_msg.set("/leave")
+        send()
 
 top = tkinter.Tk()
 top.title("Jupiter Chat")
@@ -188,11 +205,11 @@ HOST = "LOCALHOST"
 PORT = 33000
 
 BUFSIZ = 1024
-ADDR = (HOST, PORT)
+#ADDR = (HOST, PORT)
 
 client_socket = socket(AF_INET, SOCK_STREAM)
-client_socket.connect(ADDR)
+#client_socket.connect(ADDR)
 
-receive_thread = Thread(target=receive)
-receive_thread.start()
+#receive_thread = Thread(target=receive)
+#receive_thread.start()
 tkinter.mainloop()  # Starts GUI execution.

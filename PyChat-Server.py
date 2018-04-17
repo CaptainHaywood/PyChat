@@ -43,7 +43,7 @@ def handle_client(client):
         if msg != bytes("/leave", "utf8"):
             broadcast(msg, name+": ")
         else:
-            client.send(bytes("/leave", "utf8"))
+            #client.send(bytes("/leave", "utf8")) # THIS FUCKS UP THE DISCON SEQUENCE
             client.close()
             del clients[client]
             broadcast(bytes("%s has left the chat." % name, "utf8"))
