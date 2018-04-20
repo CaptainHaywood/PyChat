@@ -116,7 +116,7 @@ def helpb():
 def receive():
     while True:
         try:
-            msg = client_socket.recv(BUFSIZ).decode("utf8")
+            msg = client_socket.recv(BUFSIZ).decode("unicode")
             msg_list.insert(tkinter.END, msg)
         except OSError:  #client may have left the chat
             break
@@ -129,7 +129,7 @@ def send(event=None):
     else:
         msg = my_msg.get()
         my_msg.set("")
-        client_socket.send(bytes(msg, "utf8"))
+        client_socket.send(bytes(msg, "unicode"))
         if msg == "/leave":
             msg_list.insert(tkinter.END, "")
             msg_list.insert(tkinter.END, "DISCONNECTED FROM SERVER")
