@@ -24,29 +24,29 @@ def accept_incoming_connections():
     while True:
         client, client_address = SERVER.accept()
         print("%s:%s has connected." % client_address)
-        client.send(bytes(welcome, "unicode"))
+        client.send(bytes(welcome, "utf8"))
         addresses[client] = client_address
         Thread(target=handle_client, args=(client,)).start()
 
 
 def handle_client(client):
-    name = client.recv(BUFSIZ).decode("unicode")
+    name = client.recv(BUFSIZ).decode("utf8")
     welcomeM = success
-    client.send(bytes(welcomeM, "unicode"))
+    client.send(bytes(welcomeM, "utf8"))
     msg = "%s has joined the chat." % name
-    broadcast(bytes(msg, "unicode"))
-    client.send(bytes(" ", "unicode"))
+    broadcast(bytes(msg, "utf8"))
+    client.send(bytes(" ", "utf8"))
     clients[client] = name
     
     while True:
         msg = client.recv(BUFSIZ)
-        if msg != bytes("/leave", "unicode"):
+        if msg != bytes("/leave", "utf8"):
             broadcast(msg, name+": ")
         else:
-            #client.send(bytes("/leave", "unicode")) # THIS FUCKS UP THE DISCON SEQUENCE
+            #client.send(bytes("/leave", "utf8")) # THIS FUCKS UP THE DISCON SEQUENCE
             client.close()
             del clients[client]
-            broadcast(bytes("%s has left the chat." % name, "unicode"))
+            broadcast(bytes("%s has left the chat." % name, "utf8"))
             break
 
 
@@ -54,7 +54,7 @@ def broadcast(msg, prefix=""):  # prefix is for name identification.
     """Broadcasts a message to all the clients."""
 
     for sock in clients:
-        sock.send(bytes(prefix, "unicode")+msg)
+        sock.send(bytes(prefix, "utf8")+msg)
 
         
 clients = {}

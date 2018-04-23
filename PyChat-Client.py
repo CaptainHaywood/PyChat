@@ -1,11 +1,15 @@
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
+import time
 import tkinter
+from tkinter import ttk
 global HOST
 global PORT
 global conecc
 global hostv
 global portv
+global client_socket
+startup = "no"
 conecc = "NO"
 
 def about():
@@ -27,13 +31,13 @@ def about():
 
 def connect():
     global conecc
+    global client_socket
     BUFSIZ = 1024
-    HOST = "LOCALHOST"
-    PORT = 33000
+    #HOST = "LOCALHOST"
+    #PORT = 33000
     ADDR = (HOST, PORT)
-
-    #if conecc == "NO":
-        #client_socket = socket(AF_INET, SOCK_STREAM)
+    
+    client_socket = socket(AF_INET, SOCK_STREAM)
         
     client_socket.connect(ADDR)
 
@@ -55,20 +59,6 @@ def servers():
     portv.set("")
     serverwin = tkinter.Tk()
     serverwin.title("Manage Connections")
-    conto = tkinter.Label(serverwin, text="Currently Connected To:")
-    conto.grid(row=2, column=1)
-    conhostl = tkinter.Label(serverwin, text="Host IP:")
-    conhostl.grid(row=3, column=0)
-    conhost = tkinter.Label(serverwin, text=HOST)
-    conhost.grid(row=3, column=1)
-    conportl = tkinter.Label(serverwin, text="Port:")
-    conportl.grid(row=4, column=0)
-    conport = tkinter.Label(serverwin, text=PORT)
-    conport.grid(row=4, column=1)
-    discon = tkinter.Button(serverwin, width=10, text="Disconnect", command=disconnect)
-    discon.grid(row=5, column=1)
-    brB = tkinter.Label(serverwin, text="#-----#")
-    brB.grid(row=6, column=1)
     hostlabel = tkinter.Label(serverwin, text="Host IP:")
     hostlabel.grid(row=7, column=0)
     portlabel = tkinter.Label(serverwin, text="Port:")
@@ -116,24 +106,29 @@ def helpb():
 def receive():
     while True:
         try:
-            msg = client_socket.recv(BUFSIZ).decode("unicode")
-            msg_list.insert(tkinter.END, msg)
+            if conecc == "YES":
+                msg = client_socket.recv(BUFSIZ).decode("utf8")
+                msg_list.insert(tkinter.END, msg)
+            else:
+                uselessvar = "AAAAA"
         except OSError:  #client may have left the chat
             break
 
 
 def send(event=None):
     global conecc
+    global client_socket
     if conecc == "NO":
         msg_list.insert(tkinter.END, "OFFLINE")
     else:
         msg = my_msg.get()
         my_msg.set("")
-        client_socket.send(bytes(msg, "unicode"))
+        client_socket.send(bytes(msg, "utf8"))
         if msg == "/leave":
             msg_list.insert(tkinter.END, "")
             msg_list.insert(tkinter.END, "DISCONNECTED FROM SERVER")
             client_socket.close()
+            del client_socket
             conecc = "NO"
             #top.destroy()
             #top.quit()
@@ -149,7 +144,7 @@ def on_closing(event=None):
         send()
 
 top = tkinter.Tk()
-top.title("Jupiter Chat")
+top.title("PyChat")
 
 messages_frame = tkinter.Frame(top)
 buttons_frame = tkinter.Frame(top)
@@ -191,7 +186,18 @@ entry_field = tkinter.Entry(top, width = 100, textvariable=my_msg)
 entry_field.bind("<Return>", send)
 entry_field.grid(row=2, column=0)
 
-
+while startup == "no":
+    loading = tkinter.Tk()
+    loading.title("LOADING PYCHAT...")
+    loadingl = tkinter.Label(loading, text="PyChat", fg="blue", font=("TkDefaultFont", 50))
+    loadingl.grid(row=0, column=0)
+    loadbar = ttk.Progressbar(loading, length=100, orient="horizontal", mode="indeterminate")
+    loading.start()
+    time.sleep(5)
+    loading.stop()
+    
+    
+                              
 top.protocol("WM_DELETE_WINDOW", on_closing)
 
 #HOST = input('Enter host: ')

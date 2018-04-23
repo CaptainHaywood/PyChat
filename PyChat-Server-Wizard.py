@@ -1,6 +1,16 @@
 import shelve
 import os
 
+shelfFile = shelve.open('server_config')
+welcome = shelfFile['welcome_Var']
+success = shelfFile['success_Var']
+servername = shelfFile['servername_Var']
+maxconn = shelfFile['maxconn_Var']
+logonM = shelfFile['logonM_Var']
+adPIN = shelfFile['adPIN_Var']
+sport = shelfFile['sport_Var']
+shelfFile.close()
+
 def topmenu():
     global welcome
     global success
@@ -90,6 +100,7 @@ def topmenu():
         shelfFile.close()
         print("Settings saved! It is now safe to exit the wizard. Pressing enter will bring you back to the main menu.")
         wait = input("Press enter to return to main menu.")
+        topmenu()
     else:
         topmenu()
         
