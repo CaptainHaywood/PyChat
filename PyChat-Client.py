@@ -185,19 +185,7 @@ messages_frame.grid()
 entry_field = tkinter.Entry(top, width = 100, textvariable=my_msg)
 entry_field.bind("<Return>", send)
 entry_field.grid(row=2, column=0)
-
-while startup == "no":
-    loading = tkinter.Tk()
-    loading.title("LOADING PYCHAT...")
-    loadingl = tkinter.Label(loading, text="PyChat", fg="blue", font=("TkDefaultFont", 50))
-    loadingl.grid(row=0, column=0)
-    loadbar = ttk.Progressbar(loading, length=100, orient="horizontal", mode="indeterminate")
-    loading.start()
-    time.sleep(5)
-    loading.stop()
-    
-    
-                              
+                                  
 top.protocol("WM_DELETE_WINDOW", on_closing)
 
 #HOST = input('Enter host: ')
