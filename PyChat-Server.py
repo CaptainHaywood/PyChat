@@ -61,7 +61,7 @@ clients = {}
 addresses = {}
 
 HOST = ''
-PORT = 33000 #33000 default
+PORT = sport #33000 default
 BUFSIZ = 1024
 ADDR = (HOST, PORT)
 

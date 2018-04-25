@@ -6,8 +6,8 @@ from tkinter import ttk
 global HOST
 global PORT
 global conecc
-global hostv
-global portv
+global host_entry
+global port_entry
 global client_socket
 startup = "no"
 conecc = "NO"
@@ -32,19 +32,34 @@ def about():
 def connect():
     global conecc
     global client_socket
-    BUFSIZ = 1024
-    #HOST = "LOCALHOST"
-    #PORT = 33000
-    ADDR = (HOST, PORT)
-    
-    client_socket = socket(AF_INET, SOCK_STREAM)
-        
-    client_socket.connect(ADDR)
 
-    receive_thread = Thread(target=receive) 
-    receive_thread.start()
-    conecc = "YES"
+    def cerrors():
+        cerror.destroy()
     
+    try:
+        BUFSIZ = 1024
+        ADDR = (HOST, PORT)
+        
+        client_socket = socket(AF_INET, SOCK_STREAM)
+            
+        client_socket.connect(ADDR)
+
+        receive_thread = Thread(target=receive) 
+        receive_thread.start()
+        conecc = "YES"
+    
+    except:
+        cerror = tkinter.Tk()
+        cerror.title("ERROR")
+        cerrorl = tkinter.Label(cerror, text="ERROR", fg="blue", font=("TkDefaultFont", 15))
+        cerrorl.grid(row=0, column=0)
+        cerrore = tkinter.Label(cerror, text="PyChat could not connect to that server. It may be at capacity, or offline.")
+        cerrore.grid(row=1, column=0)
+        cerrorf = tkinter.Label(cerror, text="Contact the operator of the server or try again later.")
+        cerrorf.grid(row=2, column=0)
+        cerrorc = tkinter.Button(cerror, text="OK", command=cerrors)
+        cerrorc.grid(row=3, column=0)
+        
 
 def disconnect():
     HOST = "OFFLINE"
@@ -53,12 +68,20 @@ def disconnect():
     send()
 
 def servers():
+
+    def serverclose():
+        serverwin.destroy()
+    
     hostv = tkinter.StringVar()
     hostv.set("")
     portv = tkinter.StringVar()
     portv.set("")
+    chost = tkinter.StringVar()
     serverwin = tkinter.Tk()
     serverwin.title("Manage Connections")
+    currentcon = tkinter.Label(serverwin, text="Current Connection")
+    currentcon.grid(row=3, column=1)
+    currenthost = tkinter.Label
     hostlabel = tkinter.Label(serverwin, text="Host IP:")
     hostlabel.grid(row=7, column=0)
     portlabel = tkinter.Label(serverwin, text="Port:")
@@ -69,6 +92,8 @@ def servers():
     port_entry.grid(row=8, column=1)
     connectb = tkinter.Button(serverwin, width=10, text="Connect", command=connect)
     connectb.grid(row=9, column=1)
+    closeb = tkinter.Button(serverwin, text="Close", command=serverclose)
+    closeb.grid(row=10, column=1)
     
     
 
@@ -136,12 +161,9 @@ def send(event=None):
 
 
 def on_closing(event=None):
-    global conecc
-    if conecc == "NO":
-        top.destroy()
-    else:
-        my_msg.set("/leave")
-        send()
+    my_msg.set("/leave")
+    send()
+    top.destroy()
 
 top = tkinter.Tk()
 top.title("PyChat")
@@ -201,7 +223,7 @@ PORT = 33000
 BUFSIZ = 1024
 #ADDR = (HOST, PORT)
 
-client_socket = socket(AF_INET, SOCK_STREAM)
+#client_socket = socket(AF_INET, SOCK_STREAM)
 #client_socket.connect(ADDR)
 
 #receive_thread = Thread(target=receive)
