@@ -9,6 +9,8 @@ global conecc
 global host_entry
 global port_entry
 global client_socket
+HOST = "OFFLINE"
+PORT = "OFFLINE"
 startup = "no"
 conecc = "NO"
 
@@ -32,7 +34,9 @@ def about():
 def connect():
     global conecc
     global client_socket
-
+    global HOST
+    global PORT
+    PORT = int(PORT)
     def cerrors():
         cerror.destroy()
     
@@ -47,18 +51,20 @@ def connect():
         receive_thread = Thread(target=receive) 
         receive_thread.start()
         conecc = "YES"
-    
+        
+        
     except:
         cerror = tkinter.Tk()
         cerror.title("ERROR")
-        cerrorl = tkinter.Label(cerror, text="ERROR", fg="blue", font=("TkDefaultFont", 15))
+        cerrorl = tkinter.Label(cerror, text="ERROR", fg="red", font=("TkDefaultFont", 15))
         cerrorl.grid(row=0, column=0)
         cerrore = tkinter.Label(cerror, text="PyChat could not connect to that server. It may be at capacity, or offline.")
         cerrore.grid(row=1, column=0)
         cerrorf = tkinter.Label(cerror, text="Contact the operator of the server or try again later.")
         cerrorf.grid(row=2, column=0)
-        cerrorc = tkinter.Button(cerror, text="OK", command=cerrors)
+        cerrorc = tkinter.Button(cerror, text="OK", width=5, command=cerrors)
         cerrorc.grid(row=3, column=0)
+        print (":(")
         
 
 def disconnect():
@@ -68,32 +74,51 @@ def disconnect():
     send()
 
 def servers():
+    global HOST
+    global PORT
 
+    def refresh():
+        serverwin.destroy()
+        servers()
+    
     def serverclose():
         serverwin.destroy()
+
+    def connectvars():
+        global HOST
+        global PORT
+        HOST = host_entry.get()
+        PORT = port_entry.get()
+        connect()
     
     hostv = tkinter.StringVar()
-    hostv.set("")
     portv = tkinter.StringVar()
-    portv.set("")
     chost = tkinter.StringVar()
     serverwin = tkinter.Tk()
     serverwin.title("Manage Connections")
     currentcon = tkinter.Label(serverwin, text="Current Connection")
-    currentcon.grid(row=3, column=1)
+    currentcon.grid(row=1, column=1)
+    currenthostl = tkinter.Label(serverwin, text=HOST)
+    currentportl = tkinter.Label(serverwin, text=PORT)
+    currenthostl.grid(row=2, column=1)
+    currentportl.grid(row=3, column=1)
+    seperatorserver = tkinter.Label(serverwin, text=" ")
+    seperatorserver.grid(row=4, column=2)
     currenthost = tkinter.Label
     hostlabel = tkinter.Label(serverwin, text="Host IP:")
-    hostlabel.grid(row=7, column=0)
+    hostlabel.grid(row=1, column=2)
     portlabel = tkinter.Label(serverwin, text="Port:")
-    portlabel.grid(row=8, column=0)
+    portlabel.grid(row=2, column=2)
     host_entry = tkinter.Entry(serverwin, width = 25, textvariable=hostv)
-    host_entry.grid(row=7, column=1)
+    host_entry.grid(row=1, column=3)
     port_entry = tkinter.Entry(serverwin, width = 25, textvariable=portv)
-    port_entry.grid(row=8, column=1)
-    connectb = tkinter.Button(serverwin, width=10, text="Connect", command=connect)
-    connectb.grid(row=9, column=1)
+    port_entry.grid(row=2, column=3)
+    refreshb = tkinter.Button(serverwin, width=10, text="Refresh", command=refresh)
+    refreshb.grid(row=5, column=1)
+    connectb = tkinter.Button(serverwin, width=10, text="Connect", command=connectvars)
+    connectb.grid(row=5, column=3)
     closeb = tkinter.Button(serverwin, text="Close", command=serverclose)
-    closeb.grid(row=10, column=1)
+    closeb.grid(row=5, column=2)
     
     
 
@@ -217,8 +242,8 @@ top.protocol("WM_DELETE_WINDOW", on_closing)
 #else:
 #    PORT = int(PORT)
 
-HOST = "LOCALHOST"
-PORT = 33000
+#HOST = "LOCALHOST"
+#PORT = 33000
 
 BUFSIZ = 1024
 #ADDR = (HOST, PORT)
