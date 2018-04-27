@@ -2,17 +2,48 @@ from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 import time
 import tkinter
+import shelve
 from tkinter import ttk
+from pygame import mixer
 global HOST
 global PORT
 global conecc
 global host_entry
 global port_entry
 global client_socket
+
+
 HOST = "OFFLINE"
 PORT = "OFFLINE"
 startup = "no"
 conecc = "NO"
+mixer.init(frequency=22050, size=-16, channels=3, buffer=4096)
+
+
+def settings():
+    
+    def settingsclose():
+        setwin.destroy()
+        
+    def getsetvars():
+
+        setwin.destroy()
+        
+
+    notificationset = tkinter.IntVar()
+    setwin = tkinter.Tk()
+    setwin.title("Settings")
+    soundlabel = tkinter.Label(setwin, text="Sound")
+    soundlabel.grid(row=0, column=0)
+
+    funclabel = tkinter.Label(setwin, text="Functional")
+    funclabel.grid(row=0, column=1)
+
+    saveclose = tkinter.Button(setwin, text="Save and Close", command = getsetvars)
+    saveclose.grid(row=0, column=2)
+    nosaveclose = tkinter.Button(setwin, text="Close Without Saving", command = settingsclose)
+    nosaveclose.grid(row=1, column=2)
+    
 
 def about():
     def aboutclose():
@@ -64,7 +95,7 @@ def connect():
         cerrorf.grid(row=2, column=0)
         cerrorc = tkinter.Button(cerror, text="OK", width=5, command=cerrors)
         cerrorc.grid(row=3, column=0)
-        print (":(")
+        
         
 
 def disconnect():
@@ -122,8 +153,6 @@ def servers():
     
     
 
-def settings():
-    print("")
 
 def helpb():
     def helpclose():
@@ -135,13 +164,14 @@ def helpb():
     helptitle.grid(row=0, column=0, sticky=tkinter.N)
     help_list = tkinter.Listbox(helpwin, height=10, width=75)
     help_list.grid(row=1, column=0)
-    help_list.insert(tkinter.END, "//GENERAL COMMANDS//")
+    help_list.insert(tkinter.END, "GENERAL COMMANDS")
     help_list.insert(tkinter.END, "/leave: Leave the server you are currently connected to.")
     help_list.insert(tkinter.END, "/cloak: Broadcast that you have left the chat, but remain connected.")
-    help_list.insert(tkinter.END, "/???")
+    help_list.insert(tkinter.END, "/uncloak: Broadcast that you have rejoined the chat.")
+    help_list.insert(tkinter.END, "/clear: Clear the message window.")
     help_list.insert(tkinter.END, "")
-    help_list.insert(tkinter.END, "//ADMINISTRATOR COMMANDS//")
-    help_list.insert(tkinter.END, "#/PIN REQUIRED/#")
+    help_list.insert(tkinter.END, "ADMINISTRATOR COMMANDS")
+    help_list.insert(tkinter.END, "PIN REQUIRED")
     help_list.insert(tkinter.END, "/silence: Prevents any conversation from happening.")
     help_list.insert(tkinter.END, "/noise: Disables /silence if active; otherwise does nothing.")
     help_list.insert(tkinter.END, "/broadcast: Enter a message to be broadcast anonymously.")
@@ -159,6 +189,7 @@ def receive():
             if conecc == "YES":
                 msg = client_socket.recv(BUFSIZ).decode("utf8")
                 msg_list.insert(tkinter.END, msg)
+                mixer.Channel(0).play(mixer.Sound('message.ogg'))
             else:
                 uselessvar = "AAAAA"
         except OSError:  #client may have left the chat
@@ -182,7 +213,10 @@ def send(event=None):
             conecc = "NO"
             #top.destroy()
             #top.quit()
-
+        elif msg == "/clear":
+            msg_list.delete(0, tkinter.END)
+            
+        
 
 
 def on_closing(event=None):

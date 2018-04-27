@@ -40,21 +40,43 @@ def handle_client(client):
     
     while True:
         msg = client.recv(BUFSIZ)
-        if msg != bytes("/leave", "utf8"):
-            broadcast(msg, name+": ")
-        else:
+        if msg == bytes("/leave", "utf8"):
             #client.send(bytes("/leave", "utf8")) # THIS FUCKS UP THE DISCON SEQUENCE
             client.close()
             del clients[client]
             broadcast(bytes("%s has left the chat." % name, "utf8"))
             break
+        
+        elif msg == bytes("/cloak", "utf8"):
+            broadcast(bytes("%s has left the chat." % name, "utf8"))
+            
+        elif msg == bytes("/uncloak", "utf8"):
+            broadcast(bytes("%s has joined the chat." % name, "utf8"))
+            
+        elif msg == bytes("/clear", "utf8"):
+            uselessvarforthing = "AAAAA"
+
+        elif msg == bytes("/silence", "utf8"):
+            client.send(bytes("Please enter admin PIN.", "utf8"))
+            sentpin = client.recv(BUFSIZ).decode("utf8")
+            if sentpin == adPIN:
+                broadcast(bytes("Silence is now active. No messages will go through until Silence is deactivated.", "utf8"))
+                silenceon = "yes"
+            else:
+                client.send(bytes("Invalid PIN!", "utf8"))
+            
+        
+        else:
+            broadcast(msg, name+": ")
 
 
 def broadcast(msg, prefix=""):  # prefix is for name identification.
     """Broadcasts a message to all the clients."""
-
-    for sock in clients:
-        sock.send(bytes(prefix, "utf8")+msg)
+    if silenceon == "no":
+        for sock in clients:
+            sock.send(bytes(prefix, "utf8")+msg)
+    else:
+        uselessvarwoo = "ZZZ"
 
         
 clients = {}
