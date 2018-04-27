@@ -169,6 +169,7 @@ def helpb():
     help_list.insert(tkinter.END, "/cloak: Broadcast that you have left the chat, but remain connected.")
     help_list.insert(tkinter.END, "/uncloak: Broadcast that you have rejoined the chat.")
     help_list.insert(tkinter.END, "/clear: Clear the message window.")
+    help_list.insert(tkinter.END, "/name: Change your name.")
     help_list.insert(tkinter.END, "")
     help_list.insert(tkinter.END, "ADMINISTRATOR COMMANDS")
     help_list.insert(tkinter.END, "PIN REQUIRED")
