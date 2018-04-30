@@ -12,6 +12,9 @@ global host_entry
 global port_entry
 global client_socket
 
+#shelfFile = shelve.open('cfg')
+
+
 
 HOST = "OFFLINE"
 PORT = "OFFLINE"
@@ -26,23 +29,43 @@ def settings():
         setwin.destroy()
         
     def getsetvars():
-
-        setwin.destroy()
+        notifications = notificationdrop.get()
+        backgroundcolor = backdrop.get()
+        textcolor = foredrop.get()
         
-
-    notificationset = tkinter.IntVar()
+        shelfFile = shelve.open('cfg')
+        shelfFile['notif_Var'] = notifications
+        shelfFile['back_Var'] = backgroundcolor
+        shelfFile['text_Var'] = textcolor
+        shelfFile.close()
+                
+        setwin.destroy()
+    
     setwin = tkinter.Tk()
+    notificationdrop = tkinter.StringVar(setwin)
+    notificationdrop.set("Sound 1")
+    foredrop = tkinter.StringVar(setwin)
+    foredrop.set("Black")
+    backdrop = tkinter.StringVar(setwin)
+    backdrop.set("White")
     setwin.title("Settings")
-    soundlabel = tkinter.Label(setwin, text="Sound")
-    soundlabel.grid(row=0, column=0)
-
-    funclabel = tkinter.Label(setwin, text="Functional")
-    funclabel.grid(row=0, column=1)
+    cosmeticl = tkinter.Label(setwin, text="Cosmetic Settings")
+    cosmeticl.grid(row=1, column=0)
+    soundropl = tkinter.Label(setwin, text="Notification Sound")
+    soundropl.grid(row=2, column=0)
+    soundrop = tkinter.OptionMenu(setwin, notificationdrop, "Sound 1", "Sound 2", "Sound 3")
+    soundrop.grid(row=2, column=1)
+    fgl = tkinter.Label(setwin, text="Text Color")
+    fgl.grid(row=3, column=0)
+    fgdrop = tkinter.OptionMenu(setwin, foredrop, "White", "Black", "Gray", "Blue")
+    fgdrop.grid(row=3, column=1)
+    bgl = tkinter.Label(setwin, text="Background Color")
+    bgl.grid(row=4, column=0)
+    bgdrop = tkinter.OptionMenu(setwin, backdrop, "White", "Black", "Gray", "Blue")
+    bgdrop.grid(row=4, column=1)
 
     saveclose = tkinter.Button(setwin, text="Save and Close", command = getsetvars)
-    saveclose.grid(row=0, column=2)
-    nosaveclose = tkinter.Button(setwin, text="Close Without Saving", command = settingsclose)
-    nosaveclose.grid(row=1, column=2)
+    saveclose.grid(row=5, column=0)
     
 
 def about():
@@ -176,7 +199,6 @@ def helpb():
     help_list.insert(tkinter.END, "/silence: Prevents any conversation from happening.")
     help_list.insert(tkinter.END, "/noise: Disables /silence if active; otherwise does nothing.")
     help_list.insert(tkinter.END, "/broadcast: Enter a message to be broadcast anonymously.")
-    help_list.insert(tkinter.END, "/close: Broadcast a warning and close the server after ten seconds.")
     helpcb = tkinter.Button(helpwin, text="Close", width=10, command=helpclose)
     helpcb.grid(row=2, column=0, sticky=tkinter.S)
 

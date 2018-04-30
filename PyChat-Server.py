@@ -1,6 +1,8 @@
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 import shelve
+import sys
+import time
 
 global welcome
 global success
@@ -11,6 +13,8 @@ global adPIN
 global sport
 global silenceon
 global space
+global timer
+timer = None
 space = ": "
 silenceon = "no"
 
@@ -42,7 +46,9 @@ def handle_client(client):
     broadcast(bytes(msg, "utf8"))
     client.send(bytes(" ", "utf8"))
     clients[client] = name
-
+        
+        
+        
     def broadcaster():
         client.send(bytes("Please enter the broadcast message.", "utf8"))
         bmsg = client.recv(BUFSIZ).decode("utf8")
