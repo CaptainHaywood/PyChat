@@ -12,7 +12,11 @@ global host_entry
 global port_entry
 global client_socket
 
-#shelfFile = shelve.open('cfg')
+shelfFile = shelve.open('cfg')
+notifications = shelfFile['notif_Var']
+backgroundcolor = shelfFile['back_Var']
+textcolor = shelfFile['text_Var']
+shelfFile.close()
 
 
 
@@ -32,6 +36,14 @@ def settings():
         notifications = notificationdrop.get()
         backgroundcolor = backdrop.get()
         textcolor = foredrop.get()
+
+        if notifications == "Sound 1":
+            notifications = "sound1.ogg"
+        elif notifications == "Sound 2":
+            notifications = "sound2.ogg"
+        elif notifications == "Sound 3":
+            notifications = "sound3.ogg"
+        
         
         shelfFile = shelve.open('cfg')
         shelfFile['notif_Var'] = notifications
@@ -43,14 +55,12 @@ def settings():
     
     setwin = tkinter.Tk()
     notificationdrop = tkinter.StringVar(setwin)
-    notificationdrop.set("Sound 1")
+    notificationdrop.set(notifications)
     foredrop = tkinter.StringVar(setwin)
-    foredrop.set("Black")
+    foredrop.set(textcolor)
     backdrop = tkinter.StringVar(setwin)
-    backdrop.set("White")
+    backdrop.set(backgroundcolor)
     setwin.title("Settings")
-    cosmeticl = tkinter.Label(setwin, text="Cosmetic Settings")
-    cosmeticl.grid(row=1, column=0)
     soundropl = tkinter.Label(setwin, text="Notification Sound")
     soundropl.grid(row=2, column=0)
     soundrop = tkinter.OptionMenu(setwin, notificationdrop, "Sound 1", "Sound 2", "Sound 3")
@@ -105,6 +115,7 @@ def connect():
         receive_thread = Thread(target=receive) 
         receive_thread.start()
         conecc = "YES"
+
         
         
     except:
@@ -212,7 +223,7 @@ def receive():
             if conecc == "YES":
                 msg = client_socket.recv(BUFSIZ).decode("utf8")
                 msg_list.insert(tkinter.END, msg)
-                mixer.Channel(0).play(mixer.Sound('message.ogg'))
+                mixer.Channel(0).play(mixer.Sound(notifications))
             else:
                 uselessvar = "AAAAA"
         except OSError:  #client may have left the chat
@@ -244,11 +255,12 @@ def send(event=None):
 
 def on_closing(event=None):
     my_msg.set("/leave")
-    send()
+    
     top.destroy()
 
 top = tkinter.Tk()
 top.title("PyChat")
+
 
 messages_frame = tkinter.Frame(top)
 buttons_frame = tkinter.Frame(top)
@@ -275,7 +287,7 @@ aboutb.grid(row=0, column=5, sticky=tkinter.NE)
 
 scrollbar = tkinter.Scrollbar(messages_frame)  #scrollbar (vertical)
 #holds msgs
-msg_list = tkinter.Listbox(messages_frame, height=30, width=100, yscrollcommand=scrollbar.set)
+msg_list = tkinter.Listbox(messages_frame, height=30, width=100, fg=textcolor, bg=backgroundcolor, yscrollcommand=scrollbar.set)
 scrollbar.grid(row=1, column=2, sticky=tkinter.E)
 msg_list.grid(row=1, column=1)
 msg_list.grid()
