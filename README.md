@@ -1,4 +1,4 @@
-Navigation ~ [Home](README.md) ~ [Client](CLIENT.md) ~ [Server](SERVER.md) ~ [Server Wizard](WIZARD.md) ~ [Liscense](CREDITS.md)
+Navigation ~ [Home](README.md) ~ [Client](CLIENT.md) ~ [Server](SERVER.md) ~ [Server Wizard](WIZARD.md) ~ [License](CREDITS.md)
 
 # About
 PyChat is a simple GUI-equipped chat program written in Python that features:
