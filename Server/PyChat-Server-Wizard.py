@@ -68,7 +68,6 @@ def topmenu():
         elif func == "3":
             os.system('cls||echo -e \\\\033c')
             print("--- ADMIN PIN ---")
-            print("The Admin PIN is used differently depending on which logon method is used.")
             print("Users must type this PIN every time they want to use an administrative command.")
             adPIN = input("Enter PIN #: ")
             topmenu()
