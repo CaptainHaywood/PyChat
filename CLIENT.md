@@ -45,6 +45,6 @@ The Settings window has three options.
 Changes will only go into effect after a program restart.
 
 # About
-![about](https://imgur.com/rfn89ih.png
+![about](https://imgur.com/rfn89ih.png)
 
   The About window is only included here for posterity.
