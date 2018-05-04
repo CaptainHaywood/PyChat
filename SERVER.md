@@ -4,7 +4,7 @@ layout: default
 ---
 Navigation ~ [Home](README.md) ~ [Client](CLIENT.md) ~ [Server](SERVER.md) ~ [Server Wizard](WIZARD.md) ~ [License](CREDITS.md)
 
-![server](https://imgur.com/oKUqMzU)
+![server](https://imgur.com/oKUqMzU.png)
 
 This is the server window. It will notify you:
 
