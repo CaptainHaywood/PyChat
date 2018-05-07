@@ -11,6 +11,14 @@ global conecc
 global host_entry
 global port_entry
 global client_socket
+global serverwin
+global aboutwin
+global helpwin
+global setwin
+global xbutton
+xbutton = "N"
+
+
 
 shelfFile = shelve.open('cfg')
 notifications = shelfFile['notif_Var']
@@ -28,7 +36,7 @@ mixer.init(frequency=22050, size=-16, channels=3, buffer=4096)
 
 
 def settings():
-    
+    global setwin
     def settingsclose():
         setwin.destroy()
         
@@ -53,7 +61,7 @@ def settings():
                 
         setwin.destroy()
     
-    setwin = tkinter.Tk()
+    setwin = tkinter.Toplevel()
     notificationdrop = tkinter.StringVar(setwin)
     notificationdrop.set(notifications)
     foredrop = tkinter.StringVar(setwin)
@@ -67,22 +75,24 @@ def settings():
     soundrop.grid(row=2, column=1)
     fgl = tkinter.Label(setwin, text="Text Color")
     fgl.grid(row=3, column=0)
-    fgdrop = tkinter.OptionMenu(setwin, foredrop, "White", "Black", "Gray", "Blue")
+    fgdrop = tkinter.OptionMenu(setwin, foredrop, "White", "Black", "Gray", "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet")
     fgdrop.grid(row=3, column=1)
     bgl = tkinter.Label(setwin, text="Background Color")
     bgl.grid(row=4, column=0)
-    bgdrop = tkinter.OptionMenu(setwin, backdrop, "White", "Black", "Gray", "Blue")
+    bgdrop = tkinter.OptionMenu(setwin, backdrop, "White", "Black", "Gray", "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet")
     bgdrop.grid(row=4, column=1)
-
+    restartl = tkinter.Label(setwin, text="PyChat must be restarted for \n changes to take effect.")
+    restartl.grid(row=5, column=0)
     saveclose = tkinter.Button(setwin, text="Save and Close", command = getsetvars)
-    saveclose.grid(row=5, column=0)
+    saveclose.grid(row=5, column=1)
     
 
 def about():
+    global aboutwin
     def aboutclose():
         aboutwin.destroy()
 
-    aboutwin = tkinter.Tk()
+    aboutwin = tkinter.Toplevel()
     aboutwin.title("About")
     jchat = tkinter.Label(aboutwin, text="PyChat", fg="blue", font=("TkDefaultFont", 15))
     jchat.grid(row=0, column=0, sticky=tkinter.N)
@@ -139,6 +149,7 @@ def disconnect():
     send()
 
 def servers():
+    global serverwin
     global HOST
     global PORT
 
@@ -159,7 +170,7 @@ def servers():
     hostv = tkinter.StringVar()
     portv = tkinter.StringVar()
     chost = tkinter.StringVar()
-    serverwin = tkinter.Tk()
+    serverwin = tkinter.Toplevel()
     serverwin.title("Manage Connections")
     currentcon = tkinter.Label(serverwin, text="Current Connection")
     currentcon.grid(row=1, column=1)
@@ -189,10 +200,11 @@ def servers():
 
 
 def helpb():
+    global helpwin
     def helpclose():
         helpwin.destroy()
 
-    helpwin=tkinter.Tk()
+    helpwin=tkinter.Toplevel()
     helpwin.title("Help")
     helptitle = tkinter.Label(helpwin, text="HELP", fg="blue", font=("TkDefaultFont", 15))
     helptitle.grid(row=0, column=0, sticky=tkinter.N)
@@ -226,27 +238,43 @@ def receive():
                 mixer.Channel(0).play(mixer.Sound(notifications))
             else:
                 uselessvar = "AAAAA"
-        except OSError:  #client may have left the chat
+        except OSError:  #client may have discond
             break
 
 
 def send(event=None):
     global conecc
+    global xbutton
     global client_socket
     if conecc == "NO":
         msg_list.insert(tkinter.END, "OFFLINE")
+    if xbutton == "Y":
+        if conecc == "YES":
+            msg = my_msg.get()
+            my_msg.set("")
+            client_socket.send(bytes(msg, "utf8"))
+            client_socket.close()
+            del client_socket
+            top.destroy()
+            top.quit()
+            #conecc = "NO"
+        elif conecc == "NO":
+            #top.quit()
+            #top.destroy()
+            noogfjidf = "derp"
+            
+        
     else:
         msg = my_msg.get()
         my_msg.set("")
         client_socket.send(bytes(msg, "utf8"))
         if msg == "/leave":
-            msg_list.insert(tkinter.END, "")
-            msg_list.insert(tkinter.END, "DISCONNECTED FROM SERVER")
-            client_socket.close()
-            del client_socket
-            conecc = "NO"
-            #top.destroy()
-            #top.quit()
+            if conecc == "YES":
+                msg_list.insert(tkinter.END, "")
+                msg_list.insert(tkinter.END, "DISCONNECTED FROM SERVER")
+                client_socket.close()
+                del client_socket
+                conecc = "NO"
         elif msg == "/clear":
             msg_list.delete(0, tkinter.END)
             
@@ -254,9 +282,17 @@ def send(event=None):
 
 
 def on_closing(event=None):
+    global aboutwin
+    global helpwin
+    global setwin
+    global serverwin
+    global conecc
+    global xbutton
+    xbutton = "Y"
     my_msg.set("/leave")
-    
+    send()
     top.destroy()
+    top.quit()
 
 top = tkinter.Tk()
 top.title("PyChat")
@@ -264,14 +300,13 @@ top.title("PyChat")
 
 messages_frame = tkinter.Frame(top)
 buttons_frame = tkinter.Frame(top)
-my_msg = tkinter.StringVar()  # For the messages to be sent.
+my_msg = tkinter.StringVar()  # holds msg
 my_msg.set("")
 
 jchat = tkinter.Label(buttons_frame, text="MENU", fg="blue", font=("TkDefaultFont", 20))
 jchat.grid(row=0, column=3, sticky=tkinter.N)
 
-#sepA = tkinter.Seperator(messages_frame, orient=tkinter.HORIZONTAL)
-#sepA.pack(side=tkinter.LEFT, anchor=tkinter.NW) #doesnt work fix
+
 
 servb = tkinter.Button(buttons_frame, text="Connections", width = 20, command=servers)
 servb.grid(row=0, column=1, sticky=tkinter.NW)
@@ -285,8 +320,8 @@ settb.grid(row=0, column=4, sticky=tkinter.NE)
 aboutb = tkinter.Button(buttons_frame, text="About", width = 20, command=about)
 aboutb.grid(row=0, column=5, sticky=tkinter.NE)
 
-scrollbar = tkinter.Scrollbar(messages_frame)  #scrollbar (vertical)
-#holds msgs
+scrollbar = tkinter.Scrollbar(messages_frame)  #scrollbar
+#msg box
 msg_list = tkinter.Listbox(messages_frame, height=30, width=100, fg=textcolor, bg=backgroundcolor, yscrollcommand=scrollbar.set)
 scrollbar.grid(row=1, column=2, sticky=tkinter.E)
 msg_list.grid(row=1, column=1)
@@ -294,9 +329,7 @@ msg_list.grid()
 buttons_frame.grid()
 messages_frame.grid()
 
-#send_button = tkinter.Button(top, text="Send", command=send)
-#send_button.grid(row=2, column=1, sticky=tkinter.SE)
-#Above code clusterfucks the UI, DO NOT UNCOMMENT UNDER ANY CIRCUMSTANCES
+
 
 entry_field = tkinter.Entry(top, width = 100, textvariable=my_msg)
 entry_field.bind("<Return>", send)
@@ -304,22 +337,8 @@ entry_field.grid(row=2, column=0)
                                   
 top.protocol("WM_DELETE_WINDOW", on_closing)
 
-#HOST = input('Enter host: ')
-#PORT = input('Enter port: ')
-#if not PORT:
-#    PORT = 33000
-#else:
-#    PORT = int(PORT)
 
-#HOST = "LOCALHOST"
-#PORT = 33000
 
 BUFSIZ = 1024
-#ADDR = (HOST, PORT)
 
-#client_socket = socket(AF_INET, SOCK_STREAM)
-#client_socket.connect(ADDR)
-
-#receive_thread = Thread(target=receive)
-#receive_thread.start()
 tkinter.mainloop()  # Starts GUI execution.

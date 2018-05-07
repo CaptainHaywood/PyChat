@@ -29,6 +29,7 @@ sport = shelfFile ['sport_Var']
 shelfFile.close()
 
 def accept_incoming_connections():
+    global client_address
     while True:
         client, client_address = SERVER.accept()
         print("%s:%s has connected." % client_address)
@@ -38,6 +39,7 @@ def accept_incoming_connections():
 
 
 def handle_client(client):
+    global client_address
     global silenceon
     name = client.recv(BUFSIZ).decode("utf8")
     welcomeM = success
@@ -61,23 +63,29 @@ def handle_client(client):
             #client.send(bytes("/leave", "utf8")) # THIS FUCKS UP THE DISCON SEQUENCE
             client.close()
             del clients[client]
+            print("%s:%s has disconnected." % client_address)
             broadcast(bytes("%s has left the chat." % name, "utf8"))
             break
         
         elif msg == bytes("/cloak", "utf8"):
+            print("%s:%s has cloaked." % client_address)
             broadcast(bytes("%s has left the chat." % name, "utf8"))
             
         elif msg == bytes("/uncloak", "utf8"):
+            print("%s:%s has uncloaked." % client_address)
             broadcast(bytes("%s has joined the chat." % name, "utf8"))
             
         elif msg == bytes("/clear", "utf8"):
             uselessvarforthing = "AAAAA"
 
         elif msg == bytes("/name", "utf8"):
+            oldname = name
             client.send(bytes("Please enter your new name.", "utf8"))
             name = client.recv(BUFSIZ).decode("utf8")
             client.send(bytes("Name changed!", "utf8"))
-            msg = "%s has changed their name." % name
+            namecA = " has changed their name to "
+            msg = oldname + namecA + name
+            #msg = "%s has changed their name." % name
             broadcast(bytes(msg, "utf8"))
             
         elif msg == bytes("/silence", "utf8"):
