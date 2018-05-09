@@ -110,35 +110,49 @@ def connect():
     global client_socket
     global HOST
     global PORT
+    global serverwin
     PORT = int(PORT)
     def cerrors():
         cerror.destroy()
-    
-    try:
-        BUFSIZ = 1024
-        ADDR = (HOST, PORT)
-        
-        client_socket = socket(AF_INET, SOCK_STREAM)
+    def cale():
+        already.destroy()
+
+    if conecc == "YES":
+        already = tkinter.Toplevel()
+        already.title("ERROR")
+        aerrorl = tkinter.Label(already, text="ERROR", fg="red", font=("TkDefaultFont", 15))
+        aerrorl.grid(row=0, column=0)
+        ale = tkinter.Label(already, text="You are currently connected to a server! \n Please disconnect first.")
+        ale.grid(row=1, column=0)
+        alc = tkinter.Button(already, text="OK", width=5, command=cale)
+        alc.grid(row=3, column=0)
+    else:
+        try:
+            BUFSIZ = 1024
+            ADDR = (HOST, PORT)
             
-        client_socket.connect(ADDR)
+            client_socket = socket(AF_INET, SOCK_STREAM)
+                
+            client_socket.connect(ADDR)
 
-        receive_thread = Thread(target=receive) 
-        receive_thread.start()
-        conecc = "YES"
+            receive_thread = Thread(target=receive) 
+            receive_thread.start()
+            conecc = "YES"
+            serverwin.destroy()
 
-        
-        
-    except:
-        cerror = tkinter.Tk()
-        cerror.title("ERROR")
-        cerrorl = tkinter.Label(cerror, text="ERROR", fg="red", font=("TkDefaultFont", 15))
-        cerrorl.grid(row=0, column=0)
-        cerrore = tkinter.Label(cerror, text="PyChat could not connect to that server. It may be at capacity, or offline.")
-        cerrore.grid(row=1, column=0)
-        cerrorf = tkinter.Label(cerror, text="Contact the operator of the server or try again later.")
-        cerrorf.grid(row=2, column=0)
-        cerrorc = tkinter.Button(cerror, text="OK", width=5, command=cerrors)
-        cerrorc.grid(row=3, column=0)
+            
+            
+        except:
+            cerror = tkinter.Toplevel()
+            cerror.title("ERROR")
+            cerrorl = tkinter.Label(cerror, text="ERROR", fg="red", font=("TkDefaultFont", 15))
+            cerrorl.grid(row=0, column=0)
+            cerrore = tkinter.Label(cerror, text="PyChat could not connect to that server. It may be at capacity, or offline.")
+            cerrore.grid(row=1, column=0)
+            cerrorf = tkinter.Label(cerror, text="Contact the operator of the server or try again later.")
+            cerrorf.grid(row=2, column=0)
+            cerrorc = tkinter.Button(cerror, text="OK", width=5, command=cerrors)
+            cerrorc.grid(row=3, column=0)
         
         
 
@@ -234,7 +248,7 @@ def receive():
         try:
             if conecc == "YES":
                 msg = client_socket.recv(BUFSIZ).decode("utf8")
-                msg_list.insert(tkinter.END, msg)
+                msg_box.insert(tkinter.END, msg)
                 mixer.Channel(0).play(mixer.Sound(notifications))
             else:
                 uselessvar = "AAAAA"
@@ -247,7 +261,7 @@ def send(event=None):
     global xbutton
     global client_socket
     if conecc == "NO":
-        msg_list.insert(tkinter.END, "OFFLINE")
+        msg_box.insert(tkinter.END, "OFFLINE")
     if xbutton == "Y":
         if conecc == "YES":
             msg = my_msg.get()
@@ -270,13 +284,13 @@ def send(event=None):
         client_socket.send(bytes(msg, "utf8"))
         if msg == "/leave":
             if conecc == "YES":
-                msg_list.insert(tkinter.END, "")
-                msg_list.insert(tkinter.END, "DISCONNECTED FROM SERVER")
+                msg_box.insert(tkinter.END, "")
+                msg_box.insert(tkinter.END, "DISCONNECTED FROM SERVER")
                 client_socket.close()
                 del client_socket
                 conecc = "NO"
         elif msg == "/clear":
-            msg_list.delete(0, tkinter.END)
+            msg_box.delete(0, tkinter.END)
             
         
 
@@ -322,10 +336,10 @@ aboutb.grid(row=0, column=5, sticky=tkinter.NE)
 
 scrollbar = tkinter.Scrollbar(messages_frame)  #scrollbar
 #msg box
-msg_list = tkinter.Listbox(messages_frame, height=30, width=100, fg=textcolor, bg=backgroundcolor, yscrollcommand=scrollbar.set)
+msg_box = tkinter.Listbox(messages_frame, height=30, width=100, fg=textcolor, bg=backgroundcolor, yscrollcommand=scrollbar.set)
 scrollbar.grid(row=1, column=2, sticky=tkinter.E)
-msg_list.grid(row=1, column=1)
-msg_list.grid()
+msg_box.grid(row=1, column=1)
+msg_box.grid()
 buttons_frame.grid()
 messages_frame.grid()
 
@@ -341,4 +355,4 @@ top.protocol("WM_DELETE_WINDOW", on_closing)
 
 BUFSIZ = 1024
 
-tkinter.mainloop()  # Starts GUI execution.
+tkinter.mainloop()  #gui
