@@ -17,6 +17,7 @@ global timer
 timer = None
 space = ": "
 silenceon = "no"
+failure = "n"
 
 shelfFile = shelve.open('server_config')
 welcome = shelfFile ['welcome_Var']
@@ -41,6 +42,7 @@ def accept_incoming_connections():
 def handle_client(client):
     global client_address
     global silenceon
+    global failure
     name = client.recv(BUFSIZ).decode("utf8")
     welcomeM = success
     client.send(bytes(welcomeM, "utf8"))
@@ -58,9 +60,27 @@ def handle_client(client):
         broadcast(bytes(msg, "utf8"))
     
     while True:
-        msg = client.recv(BUFSIZ)
+        '''
+        if failure == "y":
+            client.close()
+            del clients[client]
+            print("%s:%s has disconnected." % client_address)
+            broadcast(bytes("%s has left the chat." % name, "utf8"))
+            failure = "n"
+            break
+            '''
+        try:
+            msg = client.recv(BUFSIZ)
+        except:
+            client.close()
+            del clients[client]
+            print("%s:%s has disconnected." % client_address)
+            broadcast(bytes("%s has left the chat." % name, "utf8"))
+            failure = "n"
+            break
+        
         if msg == bytes("/leave", "utf8"):
-            #client.send(bytes("/leave", "utf8")) # THIS FUCKS UP THE DISCON SEQUENCE
+            #client.send(bytes("/leave", "utf8")) # THIS MESSES UP THE DISCON SEQUENCE
             client.close()
             del clients[client]
             print("%s:%s has disconnected." % client_address)
@@ -121,10 +141,15 @@ def handle_client(client):
 
 def broadcast(msg, prefix=""):  # prefix is for name identification.
     global silencon
+    global failure
     """Broadcasts a message to all the clients."""
     if silenceon == "no":
-        for sock in clients:
-            sock.send(bytes(prefix, "utf8")+msg)
+        try:
+            for sock in clients:
+                    sock.send(bytes(prefix, "utf8")+msg)
+        except:
+            failure = "y"
+
     else:
         uselessvarwoo = "ZZZ"
 
