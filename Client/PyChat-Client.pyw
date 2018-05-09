@@ -249,6 +249,7 @@ def receive():
             if conecc == "YES":
                 msg = client_socket.recv(BUFSIZ).decode("utf8")
                 msg_box.insert(tkinter.END, msg)
+                msg_box.yview(tkinter.END)
                 mixer.Channel(0).play(mixer.Sound(notifications))
             else:
                 uselessvar = "AAAAA"
@@ -260,8 +261,9 @@ def send(event=None):
     global conecc
     global xbutton
     global client_socket
-    if conecc == "NO":
-        msg_box.insert(tkinter.END, "OFFLINE")
+    
+    
+    
     if xbutton == "Y":
         if conecc == "YES":
             msg = my_msg.get()
@@ -281,16 +283,19 @@ def send(event=None):
     else:
         msg = my_msg.get()
         my_msg.set("")
-        client_socket.send(bytes(msg, "utf8"))
-        if msg == "/leave":
-            if conecc == "YES":
-                msg_box.insert(tkinter.END, "")
-                msg_box.insert(tkinter.END, "DISCONNECTED FROM SERVER")
-                client_socket.close()
-                del client_socket
-                conecc = "NO"
-        elif msg == "/clear":
-            msg_box.delete(0, tkinter.END)
+        if conecc == "NO":
+            msg_box.insert(tkinter.END, "OFFLINE")
+        else:
+            client_socket.send(bytes(msg, "utf8"))
+            if msg == "/leave":
+                if conecc == "YES":
+                    msg_box.insert(tkinter.END, "")
+                    msg_box.insert(tkinter.END, "DISCONNECTED FROM SERVER")
+                    client_socket.close()
+                    del client_socket
+                    conecc = "NO"
+            elif msg == "/clear":
+                msg_box.delete(0, tkinter.END)
             
         
 
@@ -310,6 +315,7 @@ def on_closing(event=None):
 
 top = tkinter.Tk()
 top.title("PyChat")
+top.resizable(False, False)
 
 
 messages_frame = tkinter.Frame(top)
@@ -317,7 +323,7 @@ buttons_frame = tkinter.Frame(top)
 my_msg = tkinter.StringVar()  # holds msg
 my_msg.set("")
 
-jchat = tkinter.Label(buttons_frame, text="MENU", fg="blue", font=("TkDefaultFont", 20))
+jchat = tkinter.Label(buttons_frame, text="//MENU\\\\", fg="blue", font=("TkDefaultFont", 20))
 jchat.grid(row=0, column=3, sticky=tkinter.N)
 
 
@@ -337,7 +343,7 @@ aboutb.grid(row=0, column=5, sticky=tkinter.NE)
 scrollbar = tkinter.Scrollbar(messages_frame)  #scrollbar
 #msg box
 msg_box = tkinter.Listbox(messages_frame, height=30, width=100, fg=textcolor, bg=backgroundcolor, yscrollcommand=scrollbar.set)
-scrollbar.grid(row=1, column=2, sticky=tkinter.E)
+scrollbar.grid(row=1, column=2, sticky=tkinter.N + tkinter.S + tkinter.E)
 msg_box.grid(row=1, column=1)
 msg_box.grid()
 buttons_frame.grid()
@@ -347,7 +353,7 @@ messages_frame.grid()
 
 entry_field = tkinter.Entry(top, width = 100, textvariable=my_msg)
 entry_field.bind("<Return>", send)
-entry_field.grid(row=2, column=0)
+entry_field.grid(row=2, column=0, sticky=tkinter.N + tkinter.W)
                                   
 top.protocol("WM_DELETE_WINDOW", on_closing)
 
